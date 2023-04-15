@@ -1,7 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
 
-import clsx from 'clsx';
-
 import Form from 'react-bootstrap/Form';
 
 import Button from 'react-bootstrap/Button';
@@ -9,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -18,7 +17,7 @@ import * as yup from 'yup';
 import registerAuth from '~/api/auth/register';
 import Loading from '~/components/Loading';
 import Notify from '~/components/Notification';
-import styles from './register.module.css';
+import '../authentication.css';
 
 const schema = yup
 
@@ -96,33 +95,27 @@ function Register() {
       {loading ? (
         <Loading />
       ) : (
-        <div className={clsx(styles.container)}>
-          {' '}
-          <Form
-            onSubmit={handleSubmit(onSubmit)}
-            className={clsx(styles.content)}
-          >
-            <h1>Register</h1>
-
-            <Form.Group
-              className={clsx(styles.group, 'mb-3')}
-
-              // controlId="formBasicEmail"
-            >
-              <Form.Label>Username</Form.Label>
-
+        <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+          <h1>
+            <i>
+              <u>KAMEN</u>
+            </i>
+          </h1>
+          <div className="my-5 text-secondary fw-semibold">
+            Welcome to Kamen system
+          </div>
+          <Form className="w-75" onSubmit={handleSubmit(onSubmit)}>
+            <Form.Group>
               <Form.Control
+                className="cutom-form-control"
                 {...register('username')}
                 placeholder="Username"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
               />
             </Form.Group>
 
-            <Form.Group className={clsx(styles.group, 'mb-3')}>
-              <Form.Label>Password</Form.Label>
-
+            <Form.Group>
               <Form.Control
+                className="cutom-form-control"
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
@@ -133,19 +126,18 @@ function Register() {
                   errors={errors}
                   name="password"
                   render={({ message }) => (
-                    <p className={clsx(styles.error)}>{message}</p>
+                    <p className="text-danger">{message}</p>
                   )}
                 />
               </Form.Text>
             </Form.Group>
 
-            <Form.Group className={clsx(styles.group, 'mb-3')}>
-              <Form.Label>Retype Password</Form.Label>
-
+            <Form.Group>
               <Form.Control
                 {...register('retypePassword')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="retype password"
+                className="cutom-form-control"
               />
 
               <Form.Check
@@ -164,19 +156,15 @@ function Register() {
                   errors={errors}
                   name="retypePassword"
                   render={({ message }) => (
-                    <p className={clsx(styles.error)}>{message}</p>
+                    <p className="text-danger">{message}</p>
                   )}
                 />
               </Form.Text>
             </Form.Group>
 
-            <Form.Group
-              className={clsx(styles.group, 'mb-3')}
-              controlId="formBasicName"
-            >
-              <Form.Label>Name</Form.Label>
-
+            <Form.Group controlId="formBasicName">
               <Form.Control
+                className="cutom-form-control"
                 {...register('displayName')}
                 type="text"
                 placeholder="Enter Name"
@@ -187,38 +175,54 @@ function Register() {
                   errors={errors}
                   name="displayName"
                   render={({ message }) => (
-                    <p className={clsx(styles.error)}>{message}</p>
+                    <p className="text-danger">{message}</p>
                   )}
                 />
               </Form.Text>
             </Form.Group>
 
-            <Form.Group
-              className={clsx(styles.group, 'mb-3')}
-              controlId="formBasicEmail"
-            >
-              <Form.Label>Email address</Form.Label>
-
+            <Form.Group controlId="formBasicEmail">
               <Form.Control
+                className="cutom-form-control"
                 {...register('email')}
                 type="email"
                 placeholder="Enter email"
               />
-
               <Form.Text className="text-muted">
                 <ErrorMessage
                   errors={errors}
                   name="email"
                   render={({ message }) => (
-                    <p className={clsx(styles.error)}>{message}</p>
+                    <p className="text-danger">{message}</p>
                   )}
                 />
               </Form.Text>
             </Form.Group>
 
-            <Button type="submit" variant="dark" className="mb-3 v-75">
-              Submit
-            </Button>
+            <div className="text-center">
+              <Button
+                type="submit"
+                variant="secondary"
+                className="mb-3 v-75 rounded-5 px-5"
+              >
+                Submit
+              </Button>
+              <div
+                style={{ fontSize: '0.8rem' }}
+                className="my-3 text-secondary"
+              >
+                ----If you had a account----
+              </div>
+              <Button
+                as={Link}
+                to="/login"
+                type="submit"
+                variant="secondary"
+                className="mb-3 v-75 rounded-5 px-5"
+              >
+                Login here
+              </Button>
+            </div>
           </Form>
         </div>
       )}

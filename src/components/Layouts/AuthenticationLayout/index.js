@@ -1,10 +1,12 @@
-import React, { useContext } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { AuthContext } from '~/Context';
+import { Outlet } from 'react-router-dom';
 
 export default function AuthenticationLayout() {
-  const context = useContext(AuthContext);
-  const { profile } = context;
-  const unAuthenticated = profile === null || profile === undefined;
-  return unAuthenticated ? <Outlet /> : <Navigate to="/home" />;
+  return (
+    <div className="h-100 w-100 d-flex">
+      <img className="w-50" src="img/login-bg.jpg" alt="none" />
+      <div className="w-50">
+        <Outlet />
+      </div>
+    </div>
+  );
 }

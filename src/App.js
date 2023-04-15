@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AuthenticationLayout from './components/Layouts/AuthenticationLayout';
+import CheckAuthenticationLayout from './components/Layouts/CheckAuthenticationLayout';
 
 import DefaultLayout from './components/Layouts/DefaultLayout';
 import PrivateLayout from './components/Layouts/PrivateLayout';
@@ -14,7 +14,7 @@ import NotPermission from './pages/errors/NotPermisson';
 import GroupDetail from './pages/Group/GroupDetail';
 import GroupList from './pages/Group/GroupList';
 import Home from './pages/Home';
-import Login from './pages/Login';
+import Login from './pages/authentication/Login';
 import MyPresentation from './pages/MyPresentation';
 import PresentingPresentation from './pages/PresentingPresentation';
 import Profile from './pages/Profile';
@@ -22,8 +22,9 @@ import CollaborationInvitation from './pages/redirections/CollaborationInvitatio
 import Invitation from './pages/redirections/Invitation';
 import PasswordConfirmation from './pages/redirections/PasswordConfirmation';
 import Verification from './pages/redirections/Verification';
-import Register from './pages/Register';
-import RenewPassword from './pages/RenewPassword';
+import Register from './pages/authentication/Register';
+import RenewPassword from './pages/authentication/RenewPassword';
+import AuthenticationLayout from './components/Layouts/AuthenticationLayout';
 
 function App() {
   return (
@@ -34,21 +35,22 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/home" />} />
           <Route element={<ProfileLayout />}>
-            <Route path="/password/renew" element={<RenewPassword />} />
-            <Route
-              path="/password/confirmation"
-              element={<PasswordConfirmation />}
-            />
-
             <Route element={<AuthenticationLayout />}>
-              <Route path="/verification" element={<Verification />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/password/renew" element={<RenewPassword />} />
+              <Route
+                path="/password/confirmation"
+                element={<PasswordConfirmation />}
+              />
+
+              <Route element={<CheckAuthenticationLayout />}>
+                <Route path="/verification" element={<Verification />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+              </Route>
             </Route>
 
+            <Route path="/home" element={<Home />} />
             <Route element={<DefaultLayout />}>
-              <Route path="/home" element={<Home />} />
-
               <Route element={<PrivateLayout />}>
                 <Route
                   path="/presentation/collaborator"

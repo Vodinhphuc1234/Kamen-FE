@@ -35,7 +35,11 @@ function GroupList() {
   const memberGroups = groupList?.filter((item) => item.role === 'MEMBER');
 
   return (
-    <Container style={{ height: '100%' }} className="overflow-scroll p-5" fluid>
+    <Container
+      style={{ height: '100%' }}
+      className="overflow-scroll py-3"
+      fluid
+    >
       <AddingGroup setGroups={setGroupList} />
       <Accordion defaultActiveKey="0">
         <Accordion.Item eventKey="0">

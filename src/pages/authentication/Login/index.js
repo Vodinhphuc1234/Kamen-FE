@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import clsx from 'clsx';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
@@ -10,11 +9,11 @@ import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
+import { AuthContext } from '~/Context';
 import login from '~/api/auth/login';
 import Loading from '~/components/Loading';
-import { AuthContext } from '~/Context';
 import useGoogleLogin from '~/hooks/useGoogleLogin';
-import styles from './login.module.css';
+import '../authentication.css';
 
 const schema = yup
   .object()
@@ -104,80 +103,98 @@ function Login() {
   return loading || loadingLogin ? (
     <Loading />
   ) : (
-    <div className={clsx(styles.container)}>
-      <Form className={clsx(styles.content)} onSubmit={handleSubmit(onSubmit)}>
-        <h1>Login</h1>
-        <Form.Group
-          className={clsx(styles.group, 'mb-3')}
-          controlId="formBasicEmail"
-        >
-          <Form.Label>Username</Form.Label>
+    <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+      <h1>
+        <i>
+          <u>KAMEN</u>
+        </i>
+      </h1>
+      <div className="my-5 text-secondary fw-semibold">
+        Welcome to Kamen system
+      </div>
+
+      <Form className="w-75" onSubmit={handleSubmit(onSubmit)}>
+        <Form.Group controlId="formBasicEmail">
           <Form.Control
             {...register('username')}
             placeholder="Username"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
+            className="cutom-form-control"
           />
           <Form.Text className="text-muted">
             <ErrorMessage
               errors={errors}
               name="username"
-              render={({ message }) => (
-                <p className={clsx(styles.error)}>{message}</p>
-              )}
+              render={({ message }) => <p className="text-danger">{message}</p>}
             />
           </Form.Text>
         </Form.Group>
-        <Form.Group
-          className={clsx(styles.group, 'mb-3')}
-          controlId="formBasicPassword"
-        >
-          <Form.Label>Password</Form.Label>
+        <Form.Group controlId="formBasicPassword">
           <Form.Control
             {...register('password')}
             type={showPassword ? 'text' : 'password'}
             placeholder="password"
+            className="cutom-form-control"
           />
-
-          <Form.Check
+          <div
+            className="d-flex justify-content-between align-items-center mt-3 px-1"
             style={{ fontSize: '0.9rem' }}
-            className="mt-3"
-            type="checkbox"
-            label="Show password"
-            onChange={() => {
-              setShowPassword(!showPassword);
-            }}
-            checked={showPassword}
-          />
+          >
+            <Form.Check
+              type="checkbox"
+              label="Show password"
+              onChange={() => {
+                setShowPassword(!showPassword);
+              }}
+              checked={showPassword}
+            />
+            <div>
+              <Link
+                to="/password/renew"
+                className="text-decoration-none text-secondary"
+              >
+                Forgot password ?
+              </Link>
+            </div>
+          </div>
+
           <Form.Text className="text-muted">
             <ErrorMessage
               errors={errors}
               name="password"
-              render={({ message }) => (
-                <p className={clsx(styles.error)}>{message}</p>
-              )}
+              render={({ message }) => <p className="text-danger">{message}</p>}
             />
           </Form.Text>
           <Form.Text className="text-muted">
-            <p className={clsx(styles.error)}>{error}</p>
+            <p className="text-danger">{error}</p>
           </Form.Text>
         </Form.Group>
 
-        <Button type="submit" variant="dark" className="mb-3 v-75">
-          Submit
-        </Button>
-        <b style={{ fontSize: '1rem' }} className="mb-3">
-          Or login with Google
-        </b>
-        <div className={clsx(styles.alt_login)}>
-          <div id="btnLoginGoogle" />
+        <div className="text-center">
+          <Button
+            type="submit"
+            variant="secondary"
+            className="mb-3 v-75 rounded-5 px-5"
+          >
+            Submit
+          </Button>
+          <div style={{ fontSize: '0.8rem' }} className="my-3 text-secondary">
+            ----Or login with Google----
+          </div>
+          <Button id="btnLoginGoogle" />
+
+          <div style={{ fontSize: '0.8rem' }} className="my-3 text-secondary">
+            ----If you are new member----
+          </div>
+          <Button
+            as={Link}
+            to="/register"
+            type="submit"
+            variant="secondary"
+            className="mb-3 v-75 rounded-5 px-5"
+          >
+            Register here
+          </Button>
         </div>
-        <p className={clsx(styles.signup_opt)}>
-          Forgot password? <Link to="/password/renew">Click here</Link>
-        </p>
-        <p className={clsx(styles.signup_opt)}>
-          Not a member? <Link to="/register">Sign up now</Link>
-        </p>
       </Form>
     </div>
   );

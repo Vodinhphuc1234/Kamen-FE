@@ -1,12 +1,7 @@
 /* eslint-disable react/button-has-type */
-import clsx from 'clsx';
-import { Button } from 'react-bootstrap';
-import { FaFacebookSquare } from 'react-icons/fa';
-import { ImGoogle2 } from 'react-icons/im';
-import { AiOutlineCopyrightCircle } from 'react-icons/ai';
-import { Link, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
-import styles from './Home.module.css';
+import { Button } from 'react-bootstrap';
+import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '~/Context';
 
 function Home() {
@@ -15,30 +10,48 @@ function Home() {
   const unAuthenticated = profile === null || profile === undefined;
 
   return unAuthenticated ? (
-    <div className="overflow-scroll h-100">
-      <div className={clsx(styles.intro)}>
-        <h1 className="text-uppercase fw-bold">Experience my service </h1>
-        <div className={clsx(styles.register)} />
-        <Button as={Link} to="/register" className={clsx(styles.logup)}>
-          Register
-        </Button>
-      </div>
-      <div className={styles.footer}>
-        <div className={styles.info}>
-          <p>
-            <AiOutlineCopyrightCircle size={20} />
-            2022 Kahoot
-          </p>
-          <a href="https://copper-freezer-547.notion.site/Web-7e9342a8b65446e4ad86f16fea46cb8d">
-            Notion
-          </a>
-          <a href="https://copper-freezer-547.notion.site/Web-7e9342a8b65446e4ad86f16fea46cb8d">
-            Report
-          </a>
-        </div>
-        <div className={styles.social}>
-          <FaFacebookSquare />
-          <ImGoogle2 />
+    <div className="overflow-scroll vh-100 w-100 position-relative">
+      <img
+        className="h-100 w-100 position-absolute"
+        style={{ objectFit: 'cover', zIndex: 0 }}
+        src="img/bg.jpg"
+        alt="none"
+      />
+      <div
+        className="h-100 w-100 position-absolute bg-dark opacity-50"
+        style={{ zIndex: 10 }}
+      />
+      <div
+        className="mx-auto w-50 h-100 text-center d-flex flex-column justify-content-center align-items-center position-relative text-white"
+        style={{ zIndex: 20 }}
+      >
+        <h1 className="my-2">
+          <u>Welcome to KAMEN system</u>
+        </h1>
+        <h1 className="fw-bold my-2 ">
+          Experience our system with many free services
+        </h1>
+        <h4 className="my-2">
+          We serve many services such as: Group management, real-time
+          Presentation and one important thing is that you dont need to charge
+          any fee
+        </h4>
+        <div className="d-flex justify-content-around mt-5 w-100">
+          <Button className="w-25">
+            <h5>
+              <b>ABOUT US</b>
+            </h5>
+          </Button>
+          <Button
+            as={Link}
+            to="/login"
+            className="w-25"
+            variant="outline-light"
+          >
+            <h5>
+              <b>EXPERIENCE</b>
+            </h5>
+          </Button>
         </div>
       </div>
     </div>

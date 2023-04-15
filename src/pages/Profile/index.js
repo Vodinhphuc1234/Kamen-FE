@@ -4,35 +4,20 @@ import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 import 'bootstrap/dist/css/bootstrap.css';
 import imageCompression from 'browser-image-compression';
-import clsx from 'clsx';
-import { motion } from 'framer-motion';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
+import { Card, Container, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Modal from 'react-bootstrap/Modal';
 import { useForm } from 'react-hook-form';
-import { MdAddAPhoto } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
-import getGroupList from '~/api/normal/group/getGroupList';
+import { AuthContext } from '~/Context';
 import privateAxios from '~/api/PrivateAxios';
 import Loading from '~/components/Loading';
-import { AuthContext } from '~/Context';
-import { avt } from '~/img';
-import styles from './profile.module.css';
-
-const schema = yup
-  .object()
-  .shape({
-    username: yup.string().required(),
-    email: yup.string().email().required(),
-    displayName: yup.string().required(),
-  })
-  .required();
 
 /**
  *
@@ -40,38 +25,25 @@ const schema = yup
  */
 function Profile() {
   const navigate = useNavigate();
-  const [mygroups, setMyGroups] = useState([]);
-  useEffect(() => {
-    const asyncGroup = async () => {
-      try {
-        const resGroupList = await getGroupList();
-        setMyGroups(resGroupList?.data?.object);
-      } catch (err) {
-        toast.error(err?.response?.data?.message);
-        if (err?.response?.status === 403) {
-          navigate({ pathname: '/notPermission' });
-        }
-      }
-    };
-    asyncGroup();
-  }, []);
+  const context = useContext(AuthContext);
+  const { profile, setProfile } = context;
 
-  const ownerGroups = mygroups?.filter((item) => item.role === 'OWNER');
-  const coOwnerGroups = mygroups?.filter((item) => item.role === 'CO_OWNER');
-  //   const memberGroups = groupList?.filter((item) => item.role === 'MEMBER');
+  const schema = yup
+    .object()
+    .shape({
+      username: profile.username ? yup.string().required() : yup.string(),
+      email: yup.string().email().required(),
+      displayName: yup.string().required(),
+    })
+    .required();
 
   const {
     register,
-
     handleSubmit,
-
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
-
-  const context = useContext(AuthContext);
-  const { profile, setProfile } = context;
   const [loading, setLoading] = useState({
     flag: false,
     msg: '',
@@ -146,267 +118,177 @@ function Profile() {
   return (
     <div className="overflow-scroll h-100">
       {loading.flag ? (
-        <Loading msg={loading?.msg} className={clsx(styles.loading)} />
+        <Loading msg={loading?.msg} />
       ) : (
-        <div className={clsx('container')}>
-          <div className={clsx(styles.header)}>
-            <motion.div
-              animate={{ x: 0 }}
-              transition={{ duration: 0.5 }}
-              initial={{ x: -100 }}
-              className={clsx(styles.avt_frame)}
-            >
-              <div style={{ height: '100%', position: 'relative' }}>
-                <img
-                  referrerPolicy="no-referrer"
+        <Container className="pt-5">
+          <Card>
+            <Row>
+              <Col>
+                <Card.Img
+                  className="p-3"
+                  variant="top"
                   src={profile.avatar || '/defaultAvatar.png'}
-                  alt=""
-                  className={clsx(styles.avt)}
                 />
-                <div onClick={handleShow} className={styles.avtUpload}>
-                  <MdAddAPhoto color="white" />
-                </div>
-              </div>
-            </motion.div>
-            <Modal
-              show={show}
-              onHide={handleClose}
-              backdrop="static"
-              keyboard={false}
-              centered
-            >
-              <Modal.Header closeButton>
-                <Modal.Title style={{ fontWeight: 'bold' }}>Avatar</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <img
-                  referrerPolicy="no-referrer"
-                  alt="not fount"
-                  width="250px"
-                  src={avatar.url}
-                />
-                <Form>
-                  <Form.Group controlId="formFile" className="mb-3">
-                    <Form.Label />
-                    <Form.Control
-                      onChange={handleUpload}
-                      accept="image/png, image/jpg"
-                      type="file"
-                    />
-                  </Form.Group>
-                </Form>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  Close
-                </Button>
-                <Button onClick={handleSubmitAvt} variant="primary">
-                  Save
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-          <div className={clsx(styles.body)}>
-            <motion.div
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              initial={{ y: -100, opacity: 0 }}
-              className={clsx(styles.overview)}
-            >
-              <div className={clsx(styles.overview_info)}>
-                <div className={clsx(styles.info_detail)}>
-                  <p>{mygroups.length}</p>
-                  <p>group</p>
-                </div>
-
-                <div className={clsx(styles.info_detail)}>
-                  <p>{ownerGroups.length}</p>
-                  <p>group owner</p>
-                </div>
-                <div className={clsx(styles.info_detail)}>
-                  <p>{coOwnerGroups.length}</p>
-                  <p>group co-owner</p>
-                </div>
-              </div>
-            </motion.div>
-            <div className={clsx(styles.group_info)}>
-              <motion.div
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                initial={{ y: -100, opacity: 0 }}
-                className={clsx(styles.info)}
-              >
-                <Form id="profile-form" onSubmit={handleSubmit(onSubmit)}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Form.Check
-                      type="switch"
-                      label="Edit Profile"
-                      defaultValue={!disableEdit}
-                      className="fw-bold"
-                      onChange={() => {
-                        setEditable(!disableEdit);
-                        setProfile(profile);
-                      }}
-                    />
-                    {disableEdit ? (
-                      <div />
-                    ) : (
-                      <Button
-                        className={clsx(styles.submit_btn)}
-                        variant="outline-info"
-                        type="submit"
-                      >
-                        Submit
-                      </Button>
-                    )}
-                  </div>
-                  <fieldset disabled={disableEdit}>
-                    <Form.Group as={Col} controlId="formGridEmail">
-                      <Form.Label
-                        style={{ fontSize: '1rem', color: 'gray' }}
-                        className="fw-bold"
-                      >
-                        Email
-                      </Form.Label>
-                      <InputGroup>
-                        <Form.Control
-                          {...register('email')}
-                          defaultValue={profile.email}
-                          type="email"
-                          placeholder="Enter email"
-                          aria-label="Recipient's username"
-                          aria-describedby="basic-addon1"
+              </Col>
+              <Col className="d-flex flex-column">
+                <Card.Body>
+                  <Card.Text>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <Form.Check
+                          type="switch"
+                          label="Edit Profile"
+                          defaultValue={!disableEdit}
+                          className="fw-bold"
+                          onChange={() => {
+                            setEditable(!disableEdit);
+                            setProfile(profile);
+                          }}
                         />
-                      </InputGroup>
-                      <Form.Text
-                        className={clsx(styles.err_frame, 'text-muted')}
-                      >
-                        {disableEdit ? (
-                          <div />
-                        ) : (
-                          <ErrorMessage
-                            errors={errors}
-                            name="email"
-                            render={({ message }) => (
-                              <p className={clsx(styles.error)}>{message}</p>
-                            )}
-                          />
+                        {!disableEdit && (
+                          <Button variant="success" type="submit">
+                            Submit
+                          </Button>
                         )}
-                      </Form.Text>
-                    </Form.Group>
+                      </div>
+                      <fieldset disabled={disableEdit}>
+                        <Form.Group as={Col} controlId="formGridEmail">
+                          <Form.Label
+                            style={{ fontSize: '1rem', color: 'gray' }}
+                            className="fw-bold"
+                          >
+                            Email
+                          </Form.Label>
+                          <InputGroup>
+                            <Form.Control
+                              {...register('email')}
+                              defaultValue={profile.email}
+                              type="email"
+                              placeholder="Enter email"
+                              aria-label="Recipient's username"
+                              aria-describedby="basic-addon1"
+                            />
+                          </InputGroup>
+                          <Form.Text>
+                            {!disableEdit && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="email"
+                                render={({ message }) => (
+                                  <p className="text-danger">{message}</p>
+                                )}
+                              />
+                            )}
+                          </Form.Text>
+                        </Form.Group>
 
-                    <Form.Group as={Col} controlId="formGridCity">
-                      <Form.Label
-                        style={{ fontSize: '1rem', color: 'gray' }}
-                        className="fw-bold"
-                      >
-                        Name
-                      </Form.Label>
-                      <Form.Control
-                        {...register('displayName')}
-                        defaultValue={profile.displayName}
-                      />
-                      <Form.Text
-                        className={clsx(styles.err_frame, 'text-muted')}
-                      >
-                        {disableEdit ? (
-                          <div />
-                        ) : (
-                          <ErrorMessage
-                            errors={errors}
-                            name="displayName"
-                            render={({ message }) => (
-                              <p className={clsx(styles.error)}>{message}</p>
-                            )}
+                        <Form.Group as={Col} controlId="formGridCity">
+                          <Form.Label
+                            style={{ fontSize: '1rem', color: 'gray' }}
+                            className="fw-bold"
+                          >
+                            Name
+                          </Form.Label>
+                          <Form.Control
+                            {...register('displayName')}
+                            defaultValue={profile.displayName}
                           />
-                        )}
-                      </Form.Text>
-                    </Form.Group>
+                          <Form.Text>
+                            {!disableEdit && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="displayName"
+                                render={({ message }) => (
+                                  <p className="text-danger">{message}</p>
+                                )}
+                              />
+                            )}
+                          </Form.Text>
+                        </Form.Group>
 
-                    <Form.Group as={Col} controlId="formGridZip">
-                      <Form.Label
-                        style={{ fontSize: '1rem', color: 'gray' }}
-                        className="fw-bold"
-                      >
-                        Username
-                      </Form.Label>
-                      <Form.Control
-                        {...register('username')}
-                        defaultValue={profile.username}
-                        // login by email
-                        disabled={profile.username === null}
-                      />
-                      <Form.Text
-                        className={clsx(styles.err_frame, 'text-muted')}
-                      >
-                        {disableEdit ? (
-                          <div />
-                        ) : (
-                          <ErrorMessage
-                            errors={errors}
-                            name="username"
-                            render={({ message }) => (
-                              <p className={clsx(styles.error)}>{message}</p>
+                        <Form.Group as={Col} controlId="formGridZip">
+                          {profile.username !== null && (
+                            <>
+                              <Form.Label
+                                style={{ fontSize: '1rem', color: 'gray' }}
+                                className="fw-bold"
+                              >
+                                Username
+                              </Form.Label>
+                              <Form.Control
+                                {...register('username')}
+                                defaultValue={profile.username}
+                                // login by email
+                                disabled={profile.username === null}
+                              />
+                            </>
+                          )}
+                          <Form.Text>
+                            {!disableEdit && (
+                              <ErrorMessage
+                                errors={errors}
+                                name="username"
+                                render={({ message }) => (
+                                  <p className="text-danger">{message}</p>
+                                )}
+                              />
                             )}
-                          />
-                        )}
-                      </Form.Text>
-                    </Form.Group>
-                  </fieldset>
-                </Form>
-                <div className="text-end">
-                  <Button
-                    as={Link}
-                    to="/password/renew"
-                    variant="secondary"
-                    size="sm"
-                  >
+                          </Form.Text>
+                        </Form.Group>
+                      </fieldset>
+                    </Form>
+                  </Card.Text>
+                </Card.Body>
+                <Card.Footer className="d-flex justify-content-around">
+                  <Button variant="secondary" as={Link} to="/password/renew">
                     Change password
                   </Button>
-                </div>
-              </motion.div>
-              <motion.div
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5 }}
-                initial={{ y: -100, opacity: 0 }}
-                className={clsx(styles.slider)}
-              >
-                <div className={clsx(styles.group)}>
-                  <div className="d-flex justify-content-between py-3">
-                    <div className="fw-bold">Recent group</div>
-                    <Button size="sm" as={Link} to="/home">
-                      Show all
-                    </Button>
-                  </div>
-                  <Carousel className={styles.gallery}>
-                    {mygroups.map((group) => {
-                      return (
-                        <Carousel.Item
-                          as={Link}
-                          to={`/group/${group.id}`}
-                          key={group.id}
-                          className={clsx(styles.gallery_item)}
-                        >
-                          <img
-                            referrerPolicy="no-referrer"
-                            className={styles.img_gr}
-                            src={avt}
-                            alt="Second slide"
-                          />
+                  <Button variant="success" onClick={handleShow}>
+                    Upload avatar
+                  </Button>
+                </Card.Footer>
+              </Col>
+            </Row>
+          </Card>
 
-                          <Carousel.Caption className={clsx(styles.slide_info)}>
-                            <h3>{group.groupName}</h3>
-                            <p>{group.description}</p>
-                          </Carousel.Caption>
-                        </Carousel.Item>
-                      );
-                    })}
-                  </Carousel>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title style={{ fontWeight: 'bold' }}>Avatar</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <img
+                referrerPolicy="no-referrer"
+                alt="not fount"
+                width="250px"
+                src={avatar.url}
+              />
+              <Form>
+                <Form.Group controlId="formFile" className="mb-3">
+                  <Form.Label />
+                  <Form.Control
+                    onChange={handleUpload}
+                    accept="image/png, image/jpg"
+                    type="file"
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Close
+              </Button>
+              <Button onClick={handleSubmitAvt} variant="primary">
+                Save
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
       )}
     </div>
   );

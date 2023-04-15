@@ -1,0 +1,6 @@
+.cutom-form-control {
+  border: none;
+  border-bottom: solid black 1px;
+  margin-bottom: 30px;
+  border-radius: 0;
+}

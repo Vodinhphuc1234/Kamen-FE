@@ -10,17 +10,16 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Image from 'react-bootstrap/Image';
 import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Row from 'react-bootstrap/Row';
 import Toast from 'react-bootstrap/Toast';
-import { FaRegBell } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { AuthContext } from '~/Context';
 import logout from '~/api/auth/logout';
 import getGroupList from '~/api/normal/group/getGroupList';
-import { AuthContext } from '~/Context';
 import { menu } from '~/img';
 import styles from './Header.module.css';
 
@@ -121,41 +120,23 @@ function Header() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav
-            className="me-auto my-2 my-lg-0 justify-content-end flex-grow-1 pe-3"
+            className="me-auto my-2 my-lg-0 flex-grow-1 pe-3 justify-content-end"
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-            {unAuthenticated ? (
-              <div>
-                <Button
-                  className="ms-5 me-2"
-                  as={Link}
-                  to="/login"
-                  variant="dark"
-                >
-                  Log in
-                </Button>
-                <Button as={Link} to="/register" variant="dark">
-                  Register
-                </Button>
-              </div>
-            ) : (
-              <div className="d-flex align-items-center">
-                <Nav.Link as={Link} to="/group">
-                  <Button variant="outline-primary">MY GROUP</Button>
-                </Nav.Link>
-                <Nav.Link as={Link} to="/presentation">
-                  <Button variant="outline-primary">MY PRESENTATION</Button>
-                </Nav.Link>
+            {!unAuthenticated && (
+              <div className="d-flex align-items-center w-100 justify-content-between">
+                <div className="d-flex align-items-center border-2 border-dark border-5">
+                  <Nav.Link as={Link} to="/group">
+                    My groups
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/presentation">
+                    My presentations
+                  </Nav.Link>
+                </div>
 
                 <Row className={clsx(styles.grNoty)}>
                   <Col md={6} className="">
-                    <Button
-                      onClick={toggleShowA}
-                      className={clsx(styles.bell, 'mb-s')}
-                    >
-                      <FaRegBell />
-                    </Button>
                     <Toast
                       className={clsx(styles.notification)}
                       show={showA}
