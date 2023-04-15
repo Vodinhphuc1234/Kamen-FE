@@ -123,14 +123,14 @@ function Profile() {
         <Container className="pt-5">
           <Card>
             <Row>
-              <Col>
+              <Col xs="12" lg="6">
                 <Card.Img
                   className="p-3"
                   variant="top"
                   src={profile.avatar || '/defaultAvatar.png'}
                 />
               </Col>
-              <Col className="d-flex flex-column">
+              <Col className="d-flex flex-column" xs="12" lg="6">
                 <Card.Body>
                   <Card.Text>
                     <Form onSubmit={handleSubmit(onSubmit)}>
